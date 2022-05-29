@@ -1,0 +1,203 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <title>Gestion des etudiants</title>
+        <style>
+            body
+            {
+                background-color: lightblue;
+            }
+            #outer {
+                width: 100%;
+                text-align: center;
+            }
+            .inner {
+                display: inline-block;
+            }
+            .container
+            {
+                border: 1px solid white;
+                border-radius: 5px;
+            }
+            .panel
+            {
+                border: 2px solid #555555;
+                border-radius: 5px;
+                background-color: #cedaff;
+                text-align: center;
+                padding: 5px 30px;
+            }
+            .list
+            {
+                border-radius: 5px;
+                background-color: #f5f6ff;
+            }
+            thead .panel
+            {
+                background-color: #8092ca;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="outer">
+            <div class="inner container">
+                <h1>Gestion des etudiants</h1>
+                <table>
+                    <tr>
+                        <td>Nom :</td> <td><input id="nom" type="text"/></td>
+                        <td>CIN :</td> <td><input id="cin" type="text"/></td>
+                        <td>Email :</td> <td><input id="email" type="text"/></td>
+                    </tr>
+                    <tr>
+                        <td></td> 
+                        <td colspan="5"> 
+                            <div id="erreur_panel_1"></div>                   
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Module 1 :</td> <td><input id="module1" type="text"/></td>
+                        <td>Module 2 :</td> <td><input id="module2" type="text"/></td>
+                        <td>Module 3 :</td> <td><input id="module3" type="text"/></td>
+                    </tr>
+                    <tr>
+                        <td></td> 
+                        <td colspan="5">  
+                            <div id="erreur_panel_2"></div>                  
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td> <td></td>
+                        <td></td> <td><input type="button" value="Reset" onclick="Reset()"/></td>
+                        <td></td> <td><input type="button" value="Valider" onclick="CheckInputs()"/></td>
+                    </tr>
+                </table>
+                    
+            </div>
+            <br/><br/>
+            <div class="inner list">       
+                <table>
+                    <thead>
+                        <tr>
+                            <td>
+                                <div class="panel">
+                                    Nom
+                                </div>
+                            </td>
+                            <td>
+                                <div class="panel">
+                                    CIN
+                                </div>
+                            </td>
+                            <td>
+                                <div class="panel">
+                                    Moyenne
+                                </div>
+                            </td>
+                            <td>
+                                <div class="panel">
+                                    Resultat
+                                </div>
+                            </td>
+                        </tr>
+                    </thead>
+                    <tbody id="listBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- Code -->
+        <script>
+            function Reset()
+            {
+                nom = document.getElementById("nom");
+                cin = document.getElementById("cin");
+                email = document.getElementById("email");
+                module1 = document.getElementById("module1");
+                module2 = document.getElementById("module2");
+                module3 = document.getElementById("module3");
+
+                nom.value = "";
+                cin.value = "";
+                email.value = "";
+                module1.value = "";
+                module2.value = "";
+                module3.value = "";
+
+                ErreurPanel(1, false);
+                ErreurPanel(2, false);
+            }
+            function CheckInputs()
+            {
+                isErreur = false;
+                isErreurModule = false;
+
+                nom = document.getElementById("nom").value;
+                cin = document.getElementById("cin").value;
+                email = document.getElementById("email").value;
+                module1 = document.getElementById("module1").value;
+                module2 = document.getElementById("module2").value;
+                module3 = document.getElementById("module3").value;
+                //list
+                list = document.getElementById("listBody");
+                
+                isErreur = /^[a-zA-Z]{3,20}$/.test(nom) && /^[A-Za-z0-9]{3,10}$/.test(cin) && /^[a-zA-Z0-9._-]+@[a-z0-9._-]{2,}\.[a-z]{2,4}$/.test(email);
+                isErreurModule = /^[0-9]{1,2}$/.test(module1) && /^[0-9]{1,2}$/.test(module2) && /^[0-9]{1,2}$/.test(module3);
+
+                ErreurPanel(1, !isErreur);
+                ErreurPanel(2, !isErreurModule);
+
+                //add new data to the list
+                moy = (parseFloat(module1) + parseFloat(module2) + parseFloat(module3)) / 3;
+                validation = moy >= 10 ? "V" : "NV";
+                if(isErreur && isErreurModule)
+                {
+                    list.innerHTML += '<tr> <td> <div class="panel"> ' + nom + ' </div> </td> <td> <div class="panel"> ' + cin + ' </div> </td> <td> <div class="panel"> ' + moy.toFixed(2) + ' </div> </td> <td> <div class="panel"> ' + validation + ' </div> </td> </tr>'
+                }
+            }
+            function ErreurPanel(index, on)
+            {
+                switch(index)
+                {
+                    case 1:
+                        panel = document.getElementById("erreur_panel_1");
+                        //show the erruer panel
+                        if(on)
+                        {
+                            panel.innerHTML = '<div class="panel"> '+
+                                            ' Erreur de saisie Merci de verifier les champs suivants'+
+                                            ' <br/>' +
+                                            ' le Nom'+
+                                            ' <br/>' +
+                                            ' le CIN' +
+                                            ' <br/>' +
+                                            ' le Email' +
+                                            '</div>';
+                        }
+                        break;
+                    case 2:
+                        panel = document.getElementById("erreur_panel_2");
+                        //show the erruer panel
+                        if(on)
+                        {
+                            panel.innerHTML = '<div class="panel"> '+
+                                            ' Erreur de saisie dans les champs suivant !'+
+                                            ' <br/>' +
+                                            ' Module 1'+
+                                            ' <br/>' +
+                                            ' Module 2' +
+                                            ' <br/>' +
+                                            ' Module 3' +
+                                            '</div>';
+                        }
+                        break;
+                }
+                
+                //hide the erruer panel
+                if(!on)
+                {
+                    panel.innerHTML = "";
+                }
+            }
+        </script>
+    </body>
+</html>
